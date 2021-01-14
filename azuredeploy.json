@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "location": {
@@ -175,7 +175,8 @@
       "type": "string",
       "metadata": {
         "description": "The name of the local Administrator of the virtual machines"
-      }
+      },
+      "defaultValue": "adfs_admin"
     },
     "adminPassword": {
       "type": "securestring",
@@ -187,7 +188,7 @@
     }
   },
   "variables": {
-    "baseUrl": "https://raw.githubusercontent.com/paulomarquesc/adfs-6vms-regular-template-based/master/",
+    "baseUrl": "https://github.com/dfischer-envience/adfs",
     "storageAccountNamePrefix": "[concat(uniquestring(resourceGroup().id),'sa')]",
     "deployStorageAccountsUrl": "[concat(variables('baseUrl'),'/deployStorageAccounts.json')]",
     "deployPublicIPsUrl": "[concat(variables('baseUrl'),'/deployPublicIPs.json')]",
@@ -195,9 +196,9 @@
     "publicIPAddressType": "Static",
     "deployAvailabilitySetsUrl": "[concat(variables('baseUrl'),'/deployAvailabilitySets.json')]",
     "availabilitySetNames": [
-      "addc-as",
-      "adfs-as",
-      "wap-as"
+      "avset-addc",
+      "avset-adfs",
+      "avset-wap"
     ],
     "deployVnetURL": "[concat(variables('baseUrl'),'/vnet-',parameters('virtualNetworkUsage'),'.json')]",
     "subnets": [
@@ -242,7 +243,7 @@
     {
       "name": "storageAccountDeployment",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
+      "apiVersion": "2019-04-01",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -265,7 +266,7 @@
     {
       "name": "publicIpAddressesDeployment",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
+      "apiVersion": "2019-04-01",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -288,7 +289,7 @@
     {
       "name": "availabilitySetsDeployment",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
+      "apiVersion": "2019-04-01",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -308,7 +309,7 @@
     {
       "name": "virtualNetworkDeployment",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
+      "apiVersion": "2019-04-01",
       "dependsOn": [
         "Microsoft.Resources/deployments/nsgDeployment"
       ],
@@ -340,7 +341,7 @@
     {
       "name": "loadBalancerDeployment",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
+      "apiVersion": "2019-04-01",
       "dependsOn": [
         "Microsoft.Resources/deployments/virtualNetworkDeployment",
         "Microsoft.Resources/deployments/publicIpAddressesDeployment"
@@ -385,7 +386,7 @@
     {
       "name": "nicsDeployment",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
+      "apiVersion": "2019-04-01",
       "dependsOn": [
         "Microsoft.Resources/deployments/virtualNetworkDeployment",
         "Microsoft.Resources/deployments/loadBalancerDeployment",
@@ -445,7 +446,7 @@
     {
       "name": "nsgDeployment",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
+      "apiVersion": "2019-04-01",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -468,7 +469,7 @@
     {
       "name": "addcVmsDeployment",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
+      "apiVersion": "2019-04-01",
       "dependsOn": [
         "Microsoft.Resources/deployments/nicsDeployment"
       ],
@@ -509,7 +510,7 @@
     {
       "name": "adfsVmsDeployment",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
+      "apiVersion": "2019-04-01",
       "dependsOn": [
         "Microsoft.Resources/deployments/nicsDeployment"
       ],
@@ -550,7 +551,7 @@
     {
       "name": "wapVmsDeployment",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
+      "apiVersion": "2019-04-01",
       "dependsOn": [
         "Microsoft.Resources/deployments/nicsDeployment"
       ],
