@@ -175,8 +175,7 @@
       "type": "string",
       "metadata": {
         "description": "The name of the local Administrator of the virtual machines"
-      },
-      "defaultValue": "adfs_admin"
+      }
     },
     "adminPassword": {
       "type": "securestring",
@@ -196,9 +195,9 @@
     "publicIPAddressType": "Static",
     "deployAvailabilitySetsUrl": "[concat(variables('baseUrl'),'/deployAvailabilitySets.json')]",
     "availabilitySetNames": [
-      "avset-addc",
-      "avset-adfs",
-      "avset-wap"
+      "addc-as",
+      "adfs-as",
+      "wap-as"
     ],
     "deployVnetURL": "[concat(variables('baseUrl'),'/vnet-',parameters('virtualNetworkUsage'),'.json')]",
     "subnets": [
