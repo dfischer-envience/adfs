@@ -104,17 +104,5 @@
         "storageWorkloadType": {
             "value": "General"
         },
-        "sqlDataDisksCount": {
-            "value": 1
-        },
-        "dataPath": {
-            "value": "F:\\SQLData"
-        },
-        "sqlLogDisksCount": {
-            "value": 1
-        },
-        "logPath": {
-            "value": "G:\\SQLLog"
-        }
     }
 }

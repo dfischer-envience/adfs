@@ -54,20 +54,6 @@
             "type": "string"
         }
     },
-    "variables": {
-        "dataDisks": {
-            "createOption": "empty",
-            "caching": "ReadOnly",
-            "writeAcceleratorEnabled": false,
-            "storageAccountType": "Premium_LRS",
-            "diskSizeGB": 255
-        },
-        "tempDbPath": "D:\\SQLTemp",
-        "diskConfigurationType": "NEW",
-
-        "dataDisksLuns": "[array(range(0 ,parameters('sqlDataDisksCount')))]",
-        "logDisksLuns": "[array(range(parameters('sqlDataDisksCount'), parameters('sqlLogDisksCount')))]"
-    },
     "resources": [
         {
             "apiVersion": "2019-07-01",
