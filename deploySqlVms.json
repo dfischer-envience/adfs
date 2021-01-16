@@ -140,21 +140,6 @@
                 "virtualMachineResourceId": "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('vmNamePrefix'),copyIndex(1)))]",
                 "sqlManagement": "Full",
                 "SqlServerLicenseType": "PAYG",
-                "StorageConfigurationSettings": {
-                    "DiskConfigurationType": "[variables('diskConfigurationType')]",
-                    "StorageWorkloadType": "[parameters('storageWorkloadType')]",
-                    "SQLDataSettings": {
-                        "LUNs": "[variables('dataDisksLUNs')]",
-                        "DefaultFilePath": "[parameters('dataPath')]"
-                    },
-                    "SQLLogSettings": {
-                        "Luns": "[variables('logDisksLUNs')]",
-                        "DefaultFilePath": "[parameters('logPath')]"
-                    },
-                    "SQLTempDbSettings": {
-                        "DefaultFilePath": "[variables('tempDbPath')]"
-                    }
-                }
             }
         }
     ]
