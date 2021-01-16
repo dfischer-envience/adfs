@@ -1,6 +1,120 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "$schema": "http://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "location": {
+            "value": "germanywestcentral"
+        },
+        "storageAccountType": {
+            "value": "Premium_LRS"
+        },
+        "virtualNetworkUsage": {
+            "value": "new"
+        },
+        "virtualNetworkName": {
+            "value": "adfs-infra-vnet"
+        },
+        "virtualNetworkResourceGroupName": {
+            "value": "n/a"
+        },
+        "virtualNetworkAddressRange": {
+            "value": "10.0.0.0/16"
+        },
+        "internalSubnetName": {
+            "value": "Internal-sn"
+        },
+        "internalSubnetAddressRange": {
+            "value": "10.0.0.0/24"
+        },
+        "dmzSubnetAddressRange": {
+            "value": "10.0.1.0/24"
+        },
+        "dmzSubnetName": {
+            "value": "DMZ-sn"
+        },
+        "azBastionSubnetAddressRange": {
+            "value": "10.0.2.0/2"
+        },
+        "AzBastionSubnetName": {
+            "value": "AzureBastionSubnet"
+        },
+        "addc01NicIPAddress": {
+            "value": "10.0.0.101"
+        },
+        "addc02NicIPAddress": {
+            "value": "10.0.0.102"
+        },
+        "adfs01NicIPAddress": {
+            "value": "10.0.0.201"
+        },
+        "adfs02NicIPAddress": {
+            "value": "10.0.0.202"
+        },
+        "wap01NicIPAddress": {
+            "value": "10.0.1.101"
+        },
+        "wap02NicIPAddress": {
+            "value": "10.0.1.102"
+        },
+        "sql01NicIPAddress": {
+            "value": "10.0.0.103"
+        },
+        "sql02NicIPAddress": {
+            "value": "10.0.0.104"
+        },
+        "adfsLoadBalancerPrivateIpAddress": {
+            "value": "10.0.0.200"
+        },
+        "addcVmNamePrefix": {
+            "value": "dc"
+        },
+        "adfsVmNamePrefix": {
+            "value": "adfs"
+        },
+        "wapVmNamePrefix": {
+            "value": "wap"
+        },
+        "sqlVmNamePrefix": {
+            "value": "sql"
+        },
+        "addcVMsSize": {
+            "value": "Standard_D2ds_V4"
+        },
+        "adfsVMsSize": {
+            "value": "Standard_D2ds_V4"
+        },
+        "wapVMsSize": {
+            "value": "Standard_D2ds_V4"
+        },
+        "sqlVMsSize": {
+            "value": "Standard_D2ds_V4"
+        },
+        "adminUsername": {
+            "value": "envienceAdm" 
+        },
+        "adminPassword": {
+            "value": "WvqDP7kmowy5d!6EE@RH"
+        },
+        "sqlSku": {
+            "value": "Enterprise"
+        },
+        "imageOffer": {
+            "value": "sql2019-ws2019"
+        },
+        "storageWorkloadType": {
+            "value": "General"
+        },
+        "sqlDataDisksCount": {
+            "value": 1
+        },
+        "dataPath": {
+            "value": "F:\\SQLData"
+        },
+        "sqlLogDisksCount": {
+            "value": 1
+        },
+        "logPath": {
+            "value": "G:\\SQLLog"
+        }
     }
 }

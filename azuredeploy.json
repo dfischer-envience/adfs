@@ -1,12 +1,13 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "location": {
       "type": "string",
       "metadata": {
         "description": "The region to deploy the resources into, e.g. East US."
-      }
+      },
+      "defaultValue": "germanywestcentral"
     },
     "storageAccountType": {
       "type": "string",
@@ -66,13 +67,6 @@
       },
       "defaultValue": "10.0.0.0/24"
     },
-    "dmzSubnetAddressRange": {
-      "type": "string",
-      "metadata": {
-        "description": "The address range of the dmz subnet, which contains the Windows application proxy servers, mandatory if creating a new virtual network."
-      },
-      "defaultValue": "10.0.1.0/24"
-    },
     "dmzSubnetName": {
       "type": "string",
       "metadata": {
@@ -80,6 +74,28 @@
       },
       "defaultValue": "DMZ-sn"
     },
+    "dmzSubnetAddressRange": {
+      "type": "string",
+      "metadata": {
+        "description": "The address range of the dmz subnet, which contains the Windows application proxy servers, mandatory if creating a new virtual network."
+      },
+      "defaultValue": "10.0.1.0/24"
+    },   
+    
+    "azBastionSubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the internal subnet, mandatory on both virtual network usage options (new or existing)."
+      },
+      "defaultValue": "AzureBastionSubnet"
+    },
+    "azBastionSubnetAddressRange": {
+      "type": "string",
+      "metadata": {
+        "description": "The address range of the dmz subnet, which contains the Windows application proxy servers, mandatory if creating a new virtual network."
+      },
+      "defaultValue": "10.0.7.0/27"
+    }, 
     "addc01NicIPAddress": {
       "type": "string",
       "metadata": {
@@ -122,6 +138,20 @@
       },
       "defaultValue": "10.0.1.102"
     },
+    "sql01NicIPAddress": {
+      "type": "string",
+      "metadata": {
+        "description": "The internal IP address of the first SQL VM, this IP address will be statically assigned to the SQL and must be a valid ip address within the Internal subnet."
+      },
+      "defaultValue": "10.0.0.103"
+    },
+    "sql02NicIPAddress": {
+      "type": "string",
+      "metadata": {
+        "description": "The internal IP address of the first SQL VM, this IP address will be statically assigned to the SQL and must be a valid ip address within the Internal subnet."
+      },
+      "defaultValue": "10.0.0.104"
+    },
     "adfsLoadBalancerPrivateIpAddress": {
       "type": "string",
       "metadata": {
@@ -150,26 +180,40 @@
       },
       "defaultValue": "wap"
     },
+    "sqlVmNamePrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Virtual Machine name prefix for SQL VMs"
+      },
+      "defaultValue": "sql"
+    },    
     "addcVMsSize": {
       "type": "string",
       "metadata": {
         "description": "The vm size of the Domain Controllers"
       },
-      "defaultValue": "Standard_DS2_V2"
+      "defaultValue": "Standard_D2ds_V4"
     },
     "adfsVMsSize": {
       "type": "string",
       "metadata": {
         "description": "The vm size of the ADFS servers"
       },
-      "defaultValue": "Standard_DS2_V2"
+      "defaultValue": "Standard_D2ds_V4"
     },
     "wapVMsSize": {
       "type": "string",
       "metadata": {
         "description": "The vm size of the WAP servers"
       },
-      "defaultValue": "Standard_DS2_v2"
+      "defaultValue": "Standard_D2ds_V4"
+    },
+    "sqlVMsSize": {
+      "type": "string",
+      "metadata": {
+        "description": "The vm size of the SQL VMs"
+      },
+      "defaultValue": "Standard_D2ds_V4"
     },
     "adminUsername": {
       "type": "string",
@@ -184,6 +228,80 @@
       "metadata": {
         "description": "The password for the local Administrator account of the virtual machines"
       }
+    },
+    "imageOffer": {
+      "type": "String",
+      "defaultValue": "sql2019-ws2019",
+      "allowedValues": [
+        "sql2019-ws2019",
+        "sql2017-ws2019",
+        "SQL2017-WS2016",
+        "SQL2016SP1-WS2016",
+        "SQL2016SP2-WS2016",
+        "SQL2014SP3-WS2012R2",
+        "SQL2014SP2-WS2012R2"
+      ],
+      "metadata": {
+        "description": "Windows Server and SQL Offer"
+      }
+    },
+    "sqlSku": {
+      "type": "String",
+      "defaultValue": "Standard",
+      "allowedValues": [
+        "Standard",
+        "Enterprise",
+        "SQLDEV",
+        "Web",
+        "Express"
+      ],
+      "metadata": {
+        "description": "SQL Server Sku"
+      }
+    },
+    "storageWorkloadType": {
+      "type": "String",
+      "defaultValue": "General",
+      "allowedValues": [
+        "General",
+        "OLTP",
+        "DW"
+      ],
+      "metadata": {
+        "description": "SQL Server Workload Type"
+      }
+    },
+    "sqlDataDisksCount": {
+      "type": "int",
+      "defaultValue": 1,
+      "minValue": 1,
+      "maxValue": 8,
+      "metadata": {
+        "description": "Amount of data disks (1TB each) for SQL Data files"
+      }
+    },
+    "dataPath": {
+      "type": "String",
+      "defaultValue": "F:\\SQLData",
+      "metadata": {
+        "description": "Path for SQL Data files. Please choose drive letter from F to Z, and other drives from A to E are reserved for system"
+      }
+    },
+    "sqlLogDisksCount": {
+      "type": "int",
+      "defaultValue": 1,
+      "minValue": 1,
+      "maxValue": 8,
+      "metadata": {
+        "description": "Amount of data disks (1TB each) for SQL Log files"
+      }
+    },
+    "logPath": {
+      "type": "String",
+      "defaultValue": "G:\\SQLLog",
+      "metadata": {
+        "description": "Path for SQL Log files. Please choose drive letter from F to Z and different than the one used for SQL data. Drive letter from A to E are reserved for system"
+      }
     }
   },
   "variables": {
@@ -197,7 +315,8 @@
     "availabilitySetNames": [
       "addc-as",
       "adfs-as",
-      "wap-as"
+      "wap-as" , 
+      "sql-as"
     ],
     "deployVnetURL": "[concat(variables('baseUrl'),'/vnet-',parameters('virtualNetworkUsage'),'.json')]",
     "subnets": [
@@ -218,7 +337,17 @@
             "id": "[resourceId('Microsoft.Network/networkSecurityGroups','DMZ-sn-nsg')]"
           }
         }
+      },      
+      {
+        "name": "[parameters('azBastionSubnetName')]",
+        "properties": {
+          "addressPrefix": "[parameters('azBastionSubnetAddressRange')]",
+          "networkSecurityGroup": {
+            "id": "[resourceId('Microsoft.Network/networkSecurityGroups','AzBastion-sn-nsg')]"
+          }
+        }
       }
+      
     ],
     "deployLoadBalancersUrl": "[concat(variables('baseUrl'),'/deployLoadBalancers.json')]",
     "loadBalancerNames": [
@@ -236,13 +365,14 @@
     ],
     "deployNicsUrl": "[concat(variables('baseUrl'),'/deployNics.json')]",
     "deployNsgsUrl": "[concat(variables('baseUrl'),'/deployNsgs.json')]",
-    "deployVmsUrl": "[concat(variables('baseUrl'),'/deployVms.json')]"
+    "deployVmsUrl": "[concat(variables('baseUrl'),'/deployVms.json')]",
+    "deploySqlVmsUrl": "[concat(variables('baseUrl'),'/deploySqlVms.json')]"
   },
   "resources": [
     {
       "name": "storageAccountDeployment",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
+      "apiVersion": "2020-06-01",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -265,7 +395,7 @@
     {
       "name": "publicIpAddressesDeployment",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
+      "apiVersion": "2020-06-01",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -288,7 +418,7 @@
     {
       "name": "availabilitySetsDeployment",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
+      "apiVersion": "2020-06-01",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -308,7 +438,7 @@
     {
       "name": "virtualNetworkDeployment",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
+      "apiVersion": "2020-06-01",
       "dependsOn": [
         "Microsoft.Resources/deployments/nsgDeployment"
       ],
@@ -340,7 +470,7 @@
     {
       "name": "loadBalancerDeployment",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
+      "apiVersion": "2020-06-01",
       "dependsOn": [
         "Microsoft.Resources/deployments/virtualNetworkDeployment",
         "Microsoft.Resources/deployments/publicIpAddressesDeployment"
@@ -385,7 +515,7 @@
     {
       "name": "nicsDeployment",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
+      "apiVersion": "2020-06-01",
       "dependsOn": [
         "Microsoft.Resources/deployments/virtualNetworkDeployment",
         "Microsoft.Resources/deployments/loadBalancerDeployment",
@@ -408,7 +538,9 @@
               "[parameters('adfs01NicIPAddress')]",
               "[parameters('adfs02NicIPAddress')]",
               "[parameters('wap01NicIPAddress')]",
-              "[parameters('wap02NicIPAddress')]"
+              "[parameters('wap02NicIPAddress')]",
+              "[parameters('sql01NicIPAddress')]",
+              "[parameters('sql02NicIPAddress')]"
             ]
           },
           "nicNames": {
@@ -418,7 +550,9 @@
               "[concat(parameters('adfsVmNamePrefix'),'1-nic')]",
               "[concat(parameters('adfsVmNamePrefix'),'2-nic')]",
               "[concat(parameters('wapVmNamePrefix'),'1-nic')]",
-              "[concat(parameters('wapVmNamePrefix'),'2-nic')]"
+              "[concat(parameters('wapVmNamePrefix'),'2-nic')]",
+              "[concat(parameters('sqlVmNamePrefix'),'1-nic')]",
+              "[concat(parameters('sqlVmNamePrefix'),'2-nic')]"
             ]
           },
           "subnetIds": {
@@ -445,7 +579,7 @@
     {
       "name": "nsgDeployment",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
+      "apiVersion": "2020-06-01",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -468,7 +602,7 @@
     {
       "name": "addcVmsDeployment",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
+      "apiVersion": "2020-06-01",
       "dependsOn": [
         "Microsoft.Resources/deployments/nicsDeployment"
       ],
@@ -509,7 +643,7 @@
     {
       "name": "adfsVmsDeployment",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
+      "apiVersion": "2020-06-01",
       "dependsOn": [
         "Microsoft.Resources/deployments/nicsDeployment"
       ],
@@ -550,7 +684,7 @@
     {
       "name": "wapVmsDeployment",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
+      "apiVersion": "2020-06-01",
       "dependsOn": [
         "Microsoft.Resources/deployments/nicsDeployment"
       ],
@@ -584,6 +718,74 @@
           },
           "storageAccountNamePrefix": {
             "value": "[variables('storageAccountNamePrefix')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "sqlVmsDeployment",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-06-01",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/nicsDeployment"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('deploySqlVmsUrl')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "vmNamePrefix": {
+            "value": "[parameters('sqlVmNamePrefix')]"
+          },
+          "sqlVMsSize": {
+            "value": "[parameters('sqlVMsSize')]"
+          },
+          "imageOffer": {
+            "value": "[parameters('imageOffer')]"
+          },
+          "sqlSku": {
+            "value": "[parameters('sqlSku')]"
+          },
+          "storageWorkloadType": {
+            "value": "[parameters('storageWorkloadType')]"
+          },
+          "sqlDataDisksCount": {
+            "value": "[parameters('sqlDataDisksCount')]"
+          },
+          "dataPath": {
+            "value": "[parameters('dataPath')]"
+          },
+          "sqlLogDisksCount": {
+            "value": "[parameters('sqlLogDisksCount')]"
+          },
+          "logPath": {
+            "value": "[parameters('logPath')]"
+          },
+          "availabilitySetName": {
+            "value": "[variables('availabilitySetNames')[0]]"
+          },
+          "vmCount": {
+            "value": 2
+          },
+          "storageAccountNamePrefix": {
+            "value": "[variables('storageAccountNamePrefix')]"
+          },
+          "sqlVm1": {
+            "value": "sql1"
+          },
+          "sqlVm2": {
+            "value": "sql2"
           }
         }
       }
