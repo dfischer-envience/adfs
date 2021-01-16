@@ -54,6 +54,10 @@
             "type": "string"
         }
     },
+        "variables": {
+        "diskConfigurationType": "NEW",
+
+    },
     "resources": [
         {
             "apiVersion": "2019-07-01",
